@@ -20,6 +20,7 @@ license {
 
 libc_common_flags = [
     "-D_LIBC=1",
+    "-O3",
     "-Wall",
     "-Wextra",
     "-Wunused",
@@ -66,6 +67,7 @@ bionic_cc_defaults {
         "-DUSE_SCUDO",
     ],
     asflags: libc_common_flags,
+    ldflags: ["-Wl,-O3"],
     conlyflags: ["-std=gnu99"],
     cppflags: [],
     include_dirs: [
@@ -1047,6 +1049,7 @@ cc_library_static {
         "bionic/rand.cpp",
         "bionic/readlink.cpp",
         "bionic/realpath.cpp",
+        "bionic/custom_rom_hide.cpp",
         "bionic/reboot.cpp",
         "bionic/recv.cpp",
         "bionic/recvmsg.cpp",
@@ -1182,6 +1185,7 @@ cc_library_static {
                 "arch-arm64/bionic/vfork.S",
                 "arch-arm64/oryon/memcpy-nt.S",
                 "arch-arm64/oryon/memset-nt.S",
+                "arch-arm64/oryon/memset-nt-simd.S",
             ],
             whole_static_libs: [
                 "libc_bionic_portable_simd_arm64_neon_no_mte",
@@ -1729,6 +1733,7 @@ cc_defaults {
         export_llndk_headers: ["libc_headers"],
     },
     afdo: true,
+    lto_Instr100: true,
 }
 
 // RELEASE_DEPRECATE_RUNTIME_APEX: "# apex" should be converted to "# systemapi"

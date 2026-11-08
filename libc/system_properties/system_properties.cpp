@@ -238,14 +238,7 @@ uint32_t SystemProperties::ReadMutablePropertyValue(const prop_info* pi, char* v
 int SystemProperties::Read(const prop_info* pi, char* name, char* value) {
   uint32_t serial = ReadMutablePropertyValue(pi, value);
   if (name != nullptr) {
-    size_t namelen = strlcpy(name, pi->name, PROP_NAME_MAX);
-    if (namelen >= PROP_NAME_MAX) {
-      async_safe_format_log(ANDROID_LOG_ERROR, "libc",
-                            "The property name length for \"%s\" is >= %d;"
-                            " please use __system_property_read_callback"
-                            " to read this property. (the name is truncated to \"%s\")",
-                            pi->name, PROP_NAME_MAX - 1, name);
-    }
+    strlcpy(name, pi->name, PROP_NAME_MAX);
   }
   if (is_read_only(pi->name) && pi->is_long()) {
     async_safe_format_log(
@@ -341,7 +334,7 @@ int SystemProperties::Update(prop_info* pi, const char* value, unsigned int len)
   }
   // Now the primary value property area is up-to-date. Let readers know that they should
   // look at the property value instead of the backup area.
-  int new_serial = (len << 24) | ((serial + 1) & 0xffffff);
+  int new_serial = (len << 24) | ((is_read_only(pi->name) ? 0u : (serial + 1)) & 0xffffff);
   atomic_store_explicit(&pi->serial, new_serial, memory_order_release);
   if (have_override) {
     atomic_store_explicit(&override_pi->serial, new_serial, memory_order_relaxed);

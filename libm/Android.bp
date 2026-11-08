@@ -450,6 +450,7 @@ bionic_cc_defaults {
         "-Wno-unknown-pragmas",
         "-Wno-unused-const-variable",
         "-Wno-unused-variable",
+        "-ffp-contract=fast",
     ],
 
     ldflags: [
@@ -481,10 +482,6 @@ bionic_cc_defaults {
                 apex_available: ["com.android.runtime"],
             },
         },
-    },
-
-    lto: {
-        never: true,
     },
 }
 
